@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubeacon
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubeacon-testing
+  template:
+    metadata:
+      labels:
+        app: kubeacon-testing
+    spec:
+      containers:
+      - name: kubeacon
+        image: guillh/kubeacon-testing:latest
+        imagePullPolicy: Always
