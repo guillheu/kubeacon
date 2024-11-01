@@ -3,7 +3,6 @@ import gleam/dynamic
 import gleam/http/request
 import gleam/http/response
 import gleam/httpc
-import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
@@ -75,10 +74,9 @@ pub fn raw_request(
     )
     |> request.set_path(path)
   case httpc.dispatch(httpc.configure() |> httpc.verify_tls(verify_tls), req) {
-    Ok(response.Response(body: body, headers: _headers, status: _status)) -> {
-      io.println(body)
+    Ok(response.Response(body: body, headers: _headers, status: _status)) ->
       result.map_error(simplejson.parse(body), fn(e) { JsonError(e) })
-    }
+
     Error(e) -> Error(NetworkError(e))
   }
 }
