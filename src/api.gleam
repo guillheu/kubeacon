@@ -1,7 +1,10 @@
+import gleam/dict
 import gleam/dynamic
 import gleam/http/request
 import gleam/http/response
 import gleam/httpc
+import gleam/io
+import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import simplejson
@@ -16,28 +19,44 @@ const verify_tls = False
 pub type RequestError {
   NetworkError(dynamic.Dynamic)
   JsonError(jsonvalue.ParseError)
+  JsonPathError(jsonvalue.JsonPathError)
   CannotQueryNameWithoutNamespace
+  JsonFieldInvalidType(name: String, expected_type: String)
 }
 
-pub fn get(
+pub fn list(
   kube_config: KubeConfig,
   resource_type: KubeResourceType,
-  name: String,
-  namespace: String,
-) -> Result(jsonvalue.JsonValue, RequestError) {
-  // Doing let assert here because with Some(name) and Some(namespace) the build_api_path should never return an error
-  let assert Ok(path) =
-    build_api_path(resource_type, Some(name), Some(namespace))
-  raw_request(kube_config, path)
+  name: Option(String),
+  namespace: Option(String),
+) -> Result(List(String), RequestError) {
+  use json <- result.try(request(kube_config, resource_type, name, namespace))
+  use json_items <- result.try(
+    simplejson.jsonpath(json, ".items")
+    |> result.map_error(fn(e) { JsonPathError(e) }),
+  )
+  use json_array <- result.try(case json_items {
+    jsonvalue.JsonArray(json_array) -> Ok(json_array)
+    _ -> Error(JsonPathError(jsonvalue.InvalidJsonPath))
+  })
+  Ok(
+    result.values({
+      use resource_json <- list.map(dict.values(json_array))
+      case simplejson.jsonpath(resource_json, ".metadata.name") {
+        Ok(jsonvalue.JsonString(name)) -> Ok(name)
+        Ok(_) -> Error(JsonFieldInvalidType("metadata.name", "string"))
+        Error(e) -> Error(JsonPathError(e))
+      }
+    }),
+  )
 }
 
-pub fn get_all(
+pub fn request(
   kube_config: KubeConfig,
   resource_type: KubeResourceType,
   name: Option(String),
   namespace: Option(String),
 ) -> Result(jsonvalue.JsonValue, RequestError) {
-  // Doing let assert here because with Some(name) and Some(namespace) the build_api_path should never return an error
   use path <- result.try(build_api_path(resource_type, name, namespace))
   raw_request(kube_config, path)
 }
@@ -56,8 +75,10 @@ pub fn raw_request(
     )
     |> request.set_path(path)
   case httpc.dispatch(httpc.configure() |> httpc.verify_tls(verify_tls), req) {
-    Ok(response.Response(body: body, headers: _headers, status: _status)) ->
+    Ok(response.Response(body: body, headers: _headers, status: _status)) -> {
+      io.println(body)
       result.map_error(simplejson.parse(body), fn(e) { JsonError(e) })
+    }
     Error(e) -> Error(NetworkError(e))
   }
 }
