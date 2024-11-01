@@ -10,8 +10,8 @@ pub fn main() {
   // io.debug(kube_config)
   let api_response =
     api.get_all(kube_config, resources.Pod, None, Some("default"))
-  io.debug(api_response)
+  let _ = io.debug(api_response)
   process.sleep(10_000)
 }
 // TODO:
-// try using pod's service account locally
+// make a jsonpath wrapper in api.gleam
