@@ -12,6 +12,8 @@ packages = [
   { name = "gleam_json", version = "2.0.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gleam_json", source = "hex", outer_checksum = "CB10B0E7BF44282FB25162F1A24C1A025F6B93E777CCF238C4017E4EEF2CDE97" },
   { name = "gleam_stdlib", version = "0.40.0", build_tools = ["gleam"], requirements = [], otp_app = "gleam_stdlib", source = "hex", outer_checksum = "86606B75A600BBD05E539EB59FABC6E307EEEA7B1E5865AFB6D980A93BCB2181" },
   { name = "gleeunit", version = "1.2.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gleeunit", source = "hex", outer_checksum = "F7A7228925D3EE7D0813C922E062BFD6D7E9310F0BEE585D3A42F3307E3CFD13" },
+  { name = "jackson", version = "1.2.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "jackson", source = "hex", outer_checksum = "4D7F81FE3C46F83D201E8985564E3D986526FEFA5783CDC206A3BFAF1D89B27D" },
+  { name = "simplejson", version = "0.6.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "simplejson", source = "hex", outer_checksum = "76E3C57820653D0825009B6B1140C03FC00771A4EC1934366CCAF65C668595FC" },
   { name = "simplifile", version = "2.2.0", build_tools = ["gleam"], requirements = ["filepath", "gleam_stdlib"], otp_app = "simplifile", source = "hex", outer_checksum = "0DFABEF7DC7A9E2FF4BB27B108034E60C81BEBFCB7AB816B9E7E18ED4503ACD8" },
   { name = "yamerl", version = "0.10.0", build_tools = ["rebar3"], requirements = [], otp_app = "yamerl", source = "hex", outer_checksum = "346ADB2963F1051DC837A2364E4ACF6EB7D80097C0F53CBDC3046EC8EC4B4E6E" },
 ]
@@ -26,4 +28,6 @@ gleam_httpc = { version = ">= 3.0.0 and < 4.0.0" }
 gleam_json = { version = ">= 2.0.0 and < 3.0.0" }
 gleam_stdlib = { version = ">= 0.34.0 and < 2.0.0" }
 gleeunit = { version = ">= 1.0.0 and < 2.0.0" }
+jackson = { version = ">= 1.2.0 and < 2.0.0" }
+simplejson = { version = ">= 0.6.0 and < 1.0.0" }
 simplifile = { version = ">= 2.2.0 and < 3.0.0" }

@@ -1,12 +1,17 @@
 import gleeunit
-import gleeunit/should
+
+// import gleeunit/should
 
 pub fn main() {
   gleeunit.main()
 }
+// // gleeunit test functions end in `_test`
+// pub fn decode_test() {
+//   let assert Ok(json_input) = simplifile.read("test/example.json")
 
-// gleeunit test functions end in `_test`
-pub fn hello_world_test() {
-  1
-  |> should.equal(1)
-}
+//   let assert Ok(json) = simplejson.parse(json_input)
+
+//   io.debug(json)
+
+//   io.debug(simplejson.jsonpath(json, ".friends.#3"))
+// }

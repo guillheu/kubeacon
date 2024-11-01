@@ -1,5 +1,6 @@
 import envoy
 import glaml
+import gleam/bit_array
 import gleam/result
 import gleam/uri
 import kubeconfig/shared.{type KubeConfig, KubeConfig}
@@ -35,7 +36,7 @@ pub fn load_config() -> Result(KubeConfig, OutClusterConfigError) {
   case glaml.parse_string(kubeconfig_content) {
     Ok(doc) -> {
       let root_node = glaml.doc_node(doc)
-      use cacert <- result.try(get_yaml_string(
+      use encoded_cacert <- result.try(get_yaml_string(
         root_node,
         "clusters.#0.cluster.certificate-authority-data",
       ))
@@ -44,12 +45,23 @@ pub fn load_config() -> Result(KubeConfig, OutClusterConfigError) {
         root_node,
         "clusters.#0.cluster.server",
       ))
+      use cacert <- result.try(decode_cert(encoded_cacert))
       case uri.parse(kubeapi_uri_string) {
         Ok(kubeapi_uri) ->
           Ok(KubeConfig(kubeapi_uri: kubeapi_uri, token: token, cacert: cacert))
         Error(_) -> Error(InvalidKubeConfigYamlFormat)
       }
     }
+    Error(_) -> Error(InvalidKubeConfigYamlFormat)
+  }
+}
+
+fn decode_cert(cacert: String) -> Result(String, OutClusterConfigError) {
+  case bit_array.base64_decode(cacert) {
+    Ok(decoded) ->
+      result.map_error(bit_array.to_string(decoded), fn(_) {
+        InvalidKubeConfigYamlFormat
+      })
     Error(_) -> Error(InvalidKubeConfigYamlFormat)
   }
 }

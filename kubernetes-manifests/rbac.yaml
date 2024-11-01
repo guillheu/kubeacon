@@ -1,0 +1,30 @@
+# ServiceAccount for the deployment
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubeacon-testing-sa
+  namespace: default
+---
+# ClusterRole with minimal permissions to list resources
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeacon-testing
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["list", "get"]
+---
+# ClusterRoleBinding to bind the role to the service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubeacon-testing-binding
+subjects:
+- kind: ServiceAccount
+  name: kubeacon-testing-sa
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: kubeacon-testing
+  apiGroup: rbac.authorization.k8s.io

@@ -12,6 +12,7 @@ spec:
       labels:
         app: kubeacon-testing
     spec:
+      serviceAccountName: kubeacon-testing-sa
       containers:
       - name: kubeacon
         image: guillh/kubeacon-testing:latest

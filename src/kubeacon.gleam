@@ -1,29 +1,17 @@
-// import decode/zero as decode
-// import envoy
-// import gleam/erlang/process
-// import gleam/http/request.{type Request}
-// import gleam/http/response.{type Response}
-// import gleam/httpc
-// import gleam/io
-// import gleam/uri
-
-// pub fn main() {
-//   let assert Ok(uri) = uri.parse(testing_api_url)
-//   let assert Ok(request) = request.from_uri(uri)
-//   case httpc.send(request) {
-//     Error(e) -> {
-//       io.debug(e)
-//       Nil
-//     }
-//     Ok(response.Response(status: _, headers: _, body: body)) -> {
-//       io.println(body)
-//     }
-//   }
-// }
-
+import api
+import api/resources
+import gleam/erlang/process
 import gleam/io
+import gleam/option.{None, Some}
 import kubeconfig
 
 pub fn main() {
-  io.debug(kubeconfig.load())
+  let assert Ok(kube_config) = kubeconfig.load()
+  // io.debug(kube_config)
+  let api_response =
+    api.get_all(kube_config, resources.Pod, None, Some("default"))
+  io.debug(api_response)
+  process.sleep(10_000)
 }
+// TODO:
+// try using pod's service account locally

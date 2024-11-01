@@ -1,0 +1,10 @@
+{
+    "name":"Lucy",
+    "email":"lucy@gleam.run",
+    "is_admin":true,
+    "friends": [
+        "Robert",
+        "Bobbert",
+        "Globbert"
+    ]
+}
