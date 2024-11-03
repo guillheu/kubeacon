@@ -21,6 +21,22 @@ pub type RequestError {
   JsonPathError(jsonvalue.JsonPathError)
   CannotQueryNameWithoutNamespace
   JsonFieldInvalidType(name: String, expected_type: String)
+  ResourceNotFound
+}
+
+pub fn get(
+  kube_config: KubeConfig,
+  resource_type: KubeResourceType,
+  name: String,
+  namespace: String,
+) -> Result(String, RequestError) {
+  use res <- result.try(list(
+    kube_config,
+    resource_type,
+    Some(name),
+    Some(namespace),
+  ))
+  result.map_error(list.first(res), fn(_) { ResourceNotFound })
 }
 
 pub fn list(
